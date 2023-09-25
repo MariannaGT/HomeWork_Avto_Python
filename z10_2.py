@@ -1,25 +1,36 @@
-# Возьмите 1-3 любые задачи из прошлых семинаров, которые вы уже решали. 
-# Превратите функции в методы класса.
-# Задачи должны решаться через вызов методов экземпляра.
+# Урок 10. ООП. Начало
 
+# Решить задания, которые не успели решить на семинаре.
+# Доработаем задания 5-6. Создайте класс-фабрику.
+# Класс принимает тип животного (название одного из созданных классов) и параметры для этого типа.
+# Внутри класса создайте экземпляр на основе переданного типа и верните его из класса-фабрики.
+# Возьмите 1-3 любые задания из прошлых семинаров (например сериализация данных), которые вы уже решали. 
+# Превратите функции в методы класса, а параметры в свойства. Задания должны решаться через вызов методов экземпляра.
 
-from random import randint, sample
+import inspect
+from pack10.Animal import Fish, Bird, Mammal
 
-class RandomName:
+class Fabric:
 
-    def random_name_to_file(self, file_name, lines_number):
-        with open(file_name, mode='a', encoding='utf-8') as f:
-            for _ in range(lines_number):
-                f.write(f'{self.create_random_name()}\n')
-
-    def create_random_name(self):
-        vowels = 'aeiouy'
-        cons = 'bcdfghjklmnpqrstvwxz'
-        n1 = sample(vowels+cons, randint(4,8))
-        name = ''.join(n1)
-        if any(letter in name for letter in vowels):
-            return name.capitalize()
+    @classmethod
+    def create_animal_from_type(cls, animal_type: type):
+        res = inspect.getfullargspec(animal_type.__init__)
+        res = dict(map(lambda arg: (arg, input(f'please input {arg}: ')), res.args[1:]))
+        res = animal_type(**res)
+        return res
 
 if __name__ == '__main__':
-    res = RandomName()
-    res.random_name_to_file('new_sem10.txt', 3)
+    new_fish = Fabric.create_animal_from_type(Fish)
+    print(f'You created: {type(new_fish).__name__}')
+    print(new_fish.get_name())
+    print(new_fish.get_special_info())
+
+    new_bird = Fabric.create_animal_from_type(Bird)
+    print(f'You created: {type(new_bird).__name__}')
+    print(new_bird.get_name())
+    print(new_bird.get_special_info())
+
+    new_mammal = Fabric.create_animal_from_type(Mammal)
+    print(f'You created: {type(new_mammal).__name__}')
+    print(new_mammal.get_special_info())
+    print(new_mammal.get_name())
